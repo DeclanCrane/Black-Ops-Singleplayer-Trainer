@@ -80,7 +80,7 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
             }
         }
 
-        if (bInfiniteAmmo)
+        if (bInfiniteAmmoCheck)
         {
             std::cout << "It's true!\n";
             *(int*)primaryAmmoReserve   = 420;
@@ -90,7 +90,7 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
             *(int*)grenadeAmmo      = 4;
             *(int*)equipmentAmmo    = 420;
         }
-        if (bNoReload)
+        if (bNoReloadCheck)
         {
             std::cout << "It's also true!\n";
             *(int*)primaryAmmoMag     = 69;
