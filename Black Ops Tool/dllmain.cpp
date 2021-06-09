@@ -9,6 +9,15 @@
 // Hack Headers
 #include "Offsets.h"
 
+// Drawing
+#include "Drawing.h"
+#include "Structs.h"
+#include "Wall.h"
+
+// For Drawing Text
+#include <sstream>
+#include <string.h>
+
 // Handle to the DLL
 static HMODULE DllHandle;
 
@@ -16,6 +25,7 @@ D3D9Hook BlackOpsHook;
 ImGuiMenu BlackOpsMenu;
 
 bool bConsole = false;
+
 
 // Get the desired window
 HWND hWindow = GetWindowByName("Call of Duty®: BlackOps");
@@ -25,6 +35,44 @@ HRESULT __stdcall EndSceneDetour(IDirect3DDevice9* pDevice)
 {
     BlackOpsMenu.SetupImGui(hWindow, pDevice);
     BlackOpsMenu.Menu();
+
+    int nullIndex = 0; // The amount of null pointers in a row
+    int enemyIndex = 0;
+            // Temp
+        DWORD enemyEntityList = 0x1BFBC84;
+        while (nullIndex != 1) {
+            DWORD currentEnemy = *(DWORD*)(enemyEntityList + (0x8C * enemyIndex));
+            if (!currentEnemy) { // if currentEnemy is a nullptr
+                nullIndex += 1;
+            }
+            else {
+                vec2_t screen = { 0.f };
+                //float entPosX, entPosY;
+                vec3_t enemyWorldPos = { 0.f };
+                int enemyMaxHealth = *(int*)(currentEnemy + 0x188);
+                int enemyAliveCheck = *(int*)(currentEnemy + 0x164);
+                if (enemyAliveCheck != 0) { // If enemy is alive
+
+                    enemyWorldPos[0] = *(float*)(currentEnemy + 0x18); // Set enemy position vector
+                    enemyWorldPos[1] = *(float*)(currentEnemy + 0x1C);
+                    enemyWorldPos[2] = *(float*)(currentEnemy + 0x20);
+                    vec3_t enemyHead3D;
+                    enemyHead3D[0] = enemyWorldPos[0];
+                    enemyHead3D[1] = enemyWorldPos[1];
+                    enemyHead3D[2] = enemyWorldPos[2] + 65.f;
+                    vec2_t enemyHead2D;
+
+                    if (WorldToScreen(enemyWorldPos, screen)) { // Draw line if on screen
+                        DrawLine(screen[0], screen[1], refdef->screenWidth / 2, refdef->screenHeight, 2, D3DCOLOR_ARGB(255, 0, 79, 82), pDevice);
+                        if (WorldToScreen(enemyHead3D, enemyHead2D)) {
+                            DrawEspBox2D(screen, enemyHead2D, 2, D3DCOLOR_ARGB(255,0,58,82), pDevice);
+                        }
+                    }
+                    nullIndex = 0; // Reset nullIndex
+                }
+            }
+            enemyIndex += 1;
+        }
 
     // Call original endScene after detour
     return BlackOpsHook.pEndScene(pDevice);
@@ -80,24 +128,9 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
             }
         }
 
-        if (bInfiniteAmmoCheck)
-        {
-            std::cout << "It's true!\n";
-            *(int*)primaryAmmoReserve   = 420;
-            *(int*)secondaryAmmoReserve = 420;
-            *(int*)tertiaryAmmoReserve  = 69;
-
-            *(int*)grenadeAmmo      = 4;
-            *(int*)equipmentAmmo    = 420;
+        if (GetAsyncKeyState(VK_LEFT) & 1) {
+            Equipment->Grenades = 69;
         }
-        if (bNoReloadCheck)
-        {
-            std::cout << "It's also true!\n";
-            *(int*)primaryAmmoMag     = 69;
-            *(int*)secondaryAmmoMag   = 69;
-            *(int*)tertiaryAmmoMag    = 69;
-        }
-
         // Show Menu
         if (GetAsyncKeyState(VK_INSERT) & 1)
         {

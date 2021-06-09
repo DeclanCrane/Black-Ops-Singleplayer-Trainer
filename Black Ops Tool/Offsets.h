@@ -9,8 +9,8 @@
 // =============
 // Hack Settings
 // =============
-static bool* bInfiniteAmmoCheck;
-static bool* bNoReloadCheck;
+//static bool* bInfiniteAmmoCheck;
+//static bool* bNoReloadCheck;
 
 
 static uintptr_t zombiesCredits = (uintptr_t)(0x1C0A6C8);

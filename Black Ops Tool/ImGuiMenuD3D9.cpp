@@ -82,8 +82,8 @@ void ImGuiMenu::Menu()
         ImGui::SliderFloat("Gun Z", (float*)(*cg_gun_z + 0x18), -20.f, 20.f);
 
         ImGui::InputInt("Zombies Credits", (int*)zombiesCredits);
-        ImGui::Checkbox("Infinite Ammo", bInfiniteAmmoCheck);
-        ImGui::Checkbox("No Reload",  bNoReloadCheck);
+        //ImGui::Checkbox("Infinite Ammo", bInfiniteAmmoCheck);
+        //ImGui::Checkbox("No Reload",  bNoReloadCheck);
 
         ImGui::SliderFloat("Time Scale", (float*)(*timescale + 0x18), 0.f, 10.f);
         ImGui::SliderInt("Speed", (int*)(*g_speed + 0x18), 0, 1000);

@@ -168,10 +168,14 @@
     <ClInclude Include="..\Include\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Include\ImGui\imstb_truetype.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="Drawing.h" />
     <ClInclude Include="EndScene.h" />
     <ClInclude Include="ImGuiMenuD3D9.h" />
     <ClInclude Include="Offsets.h" />
+    <ClInclude Include="Structs.h" />
+    <ClInclude Include="Vector.h" />
     <ClInclude Include="Viewmodel.h" />
+    <ClInclude Include="Wall.h" />
     <ClInclude Include="WindowFinder.h" />
   </ItemGroup>
   <ItemGroup>
@@ -184,9 +188,13 @@
     <ClCompile Include="..\Include\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="EndScene.cpp" />
     <ClCompile Include="ImGuiMenuD3D9.cpp" />
+    <ClCompile Include="Structs.cpp" />
+    <ClCompile Include="Vector.cpp" />
     <ClCompile Include="Viewmodel.cpp" />
+    <ClCompile Include="Wall.cpp" />
     <ClCompile Include="WindowFinder.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
