@@ -1,16 +1,12 @@
 #pragma once
 
+#include <Windows.h>
+#include <vector>
+#include <string>
+
 typedef float vec_t;
 typedef float vec2_t[2];
 typedef float vec3_t[3];
-
-//struct Vector2 {
-//	float x, y;
-//};
-//
-//struct Vector3 {
-//	float x, y, z;
-//};
 
 #define _USE_MATH_DEFINES
 
@@ -55,10 +51,20 @@ public:
 }; //Size: 0x0070
 extern refdef_t* refdef;
 
+class viewAngles_t //2911E20
+{
+public:
+	float pitch;
+	float yaw;
+};
+extern viewAngles_t* viewAngles;
+
 class entity_t
 {
 public:
-	char pad_0000[272]; //0x0000
+	int clientNum; //0x0000 // Has to be tested
+	char pad_0000[256]; //0x0004
+	vec3_t N000000F9; //0x0104
 	vec3_t HeadPos; //0x0110
 	vec3_t WorldPos; //0x011C
 	char pad_0128[4]; //0x0128
@@ -68,11 +74,10 @@ public:
 	char pad_0165[31]; //0x0165
 	int Health; //0x0184
 	int MaxHealth; //0x0188
-	char pad_018C[112]; //0x018C
-}; //Size: 0x01FC
+}; //Size: 0x018C
 extern entity_t* entity;
 
-class localPlayer
+class localPlayer_t
 {
 public:
 	int gameTime; //0x0000
@@ -97,6 +102,7 @@ public:
 	char pad_0194[4]; //0x0194
 	int Stance; //0x0198
 }; //Size: 0x0490
+extern localPlayer_t* localPlayer;
 
 class equipment_t //1C08E84
 {
@@ -132,5 +138,15 @@ public:
 	int Headshots; //0x0074
 }; //Size: 0x2A3C
 
-typedef void* (__cdecl* MapRestart_t)(int i, int i2, const char * c);
-extern MapRestart_t MapRestart;
+class dvar_t
+{
+public:
+	char pad_0000[12]; //0x0000
+	int MinValue; //0x000C
+	int MaxValue; //0x0010
+	char pad_0014[4]; //0x0014
+	int Value; //0x0018
+	char pad_001C[36]; //0x001C
+}; //Size: 0x0040
+extern dvar_t* cg_drawFPS;
+

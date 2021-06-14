@@ -13,6 +13,9 @@
 #include "Drawing.h"
 #include "Structs.h"
 #include "Wall.h"
+#include "Aimbot.h"
+#include "Bones.h"
+#include "Entity.h"
 
 // For Drawing Text
 #include <sstream>
@@ -26,6 +29,7 @@ ImGuiMenu BlackOpsMenu;
 
 bool bConsole = false;
 
+Bones myBones;
 
 // Get the desired window
 HWND hWindow = GetWindowByName("Call of Duty®: BlackOps");
@@ -62,8 +66,11 @@ HRESULT __stdcall EndSceneDetour(IDirect3DDevice9* pDevice)
                     enemyHead3D[2] = enemyWorldPos[2] + 65.f;
                     vec2_t enemyHead2D;
 
-                    if (WorldToScreen(enemyWorldPos, screen)) { // Draw line if on screen
+                    if (WorldToScreen(enemyWorldPos, screen)) {
+                        // Line ESP
                         DrawLine(screen[0], screen[1], refdef->screenWidth / 2, refdef->screenHeight, 2, D3DCOLOR_ARGB(255, 0, 79, 82), pDevice);
+
+                        // Box ESP
                         if (WorldToScreen(enemyHead3D, enemyHead2D)) {
                             DrawEspBox2D(screen, enemyHead2D, 2, D3DCOLOR_ARGB(255,0,58,82), pDevice);
                         }
@@ -75,6 +82,19 @@ HRESULT __stdcall EndSceneDetour(IDirect3DDevice9* pDevice)
         }
 
     // Call original endScene after detour
+        if (GetAsyncKeyState(VK_F1) & 1)
+        {
+            for (int i = 0; i < NUM_TAGS; i++) {
+                vec3_t Origin = { 0.f };
+                WORD myBone = myBones.bones[i];
+                myBones.GetEntityBones((DWORD)*(DWORD*)dwEntityList, myBone, Origin);
+                vec2_t Screen = { 0.f };
+                if (WorldToScreen(Origin, Screen)) {
+                    DrawFont(myBones.tagNames[i].c_str(), Screen[0], Screen[1], D3DCOLOR_ARGB(255, 255, 0, 0), pDevice);
+                }
+                std::cout << "X: " << Origin[0] << "Y: " << Origin[1] << "Z: " << Origin[2] << std::endl;
+            }
+        }
     return BlackOpsHook.pEndScene(pDevice);
 }
 
@@ -130,6 +150,38 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
 
         if (GetAsyncKeyState(VK_LEFT) & 1) {
             Equipment->Grenades = 69;
+            Equipment->PrimaryMagAmmo = 69;
+            Equipment->PrimaryAmmoReserve = 420;
+        }
+        if (GetAsyncKeyState(VK_RIGHT) & 1) {
+            Aimbot();
+        }
+
+        if (GetAsyncKeyState(VK_F10) & 1) {
+            CBuf_AddText(0, "cg_fov 90");
+        }
+        if (GetAsyncKeyState(VK_F2) & 1) {
+            CBuf_AddText(0, "noclip");
+        }            
+        if (GetAsyncKeyState(VK_F3) & 1) {
+            CBuf_AddText(0, "god");
+        }
+        if (GetAsyncKeyState(VK_F4) & 1) {
+            CBuf_AddText(0, "give g11_lps_upgraded_zm");
+        }
+        if (GetAsyncKeyState(VK_F5) & 1) {
+            CBuf_AddText(0, "fade");
+        }
+        if (GetAsyncKeyState(VK_F6) & 1) {
+            CBuf_AddText(0, "bot add");
+            myBones.RegisterBones();
+        }
+        if (GetAsyncKeyState(VK_F9) & 1) {
+            Entity.GetEntities();
+            for (int i = 0; i < Entity.cgEntities.size(); i++)
+            {
+                std::cout << Entity.cgEntities[i]->Health << std::endl;
+            }
         }
         // Show Menu
         if (GetAsyncKeyState(VK_INSERT) & 1)

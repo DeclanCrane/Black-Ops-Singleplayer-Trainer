@@ -58,46 +58,46 @@ void ImGuiMenu::CleanUp()
 //-----------------------------NOTE-----------------------------------//
 void ImGuiMenu::Menu()
 {
-    if (bShowMenu)
-    {
-        ImGui::GetIO().MouseDrawCursor = true;
+    //if (bShowMenu)
+    //{
+    //    ImGui::GetIO().MouseDrawCursor = true;
 
-        ImGui_ImplDX9_NewFrame();
-        ImGui_ImplWin32_NewFrame();
-        ImGui::NewFrame();
+    //    ImGui_ImplDX9_NewFrame();
+    //    ImGui_ImplWin32_NewFrame();
+    //    ImGui::NewFrame();
 
-        ImGui::Begin("Black Ops Menu");
+    //    ImGui::Begin("Black Ops Menu");
 
-        ImGui::SliderFloat("Field of View", (float*)(*cg_fov + 0x18), 35.f, 120.f);
-        ImGui::SliderFloat("FoV Scale", (float*)(*cg_fovScale + 0x18), 0.f, 2.5f);
-        ImGui::SliderInt("FPS Cap", (int*)(*com_maxfps + 0x18), 5, 333);
-        ImGui::Checkbox("Draw HUD", (bool*)(*cg_drawHud + 0x18));
+    //    ImGui::SliderFloat("Field of View", (float*)(*cg_fov + 0x18), 35.f, 120.f);
+    //    ImGui::SliderFloat("FoV Scale", (float*)(*cg_fovScale + 0x18), 0.f, 2.5f);
+    //    ImGui::SliderInt("FPS Cap", (int*)(*com_maxfps + 0x18), 5, 333);
+    //    ImGui::Checkbox("Draw HUD", (bool*)(*cg_drawHud + 0x18));
 
-        ImGui::Checkbox("Third Person", (bool*)(*cg_thirdPerson + 0x18));
+    //    ImGui::Checkbox("Third Person", (bool*)(*cg_thirdPerson + 0x18));
 
 
-        ImGui::Checkbox("Draw Gun", (bool*)(*cg_drawGun + 0x18));
-        ImGui::SliderFloat("Gun X", (float*)(*cg_gun_x + 0x18), -20.f, 20.f);
-        ImGui::SliderFloat("Gun Y", (float*)(*cg_gun_y + 0x18), -20.f, 20.f);
-        ImGui::SliderFloat("Gun Z", (float*)(*cg_gun_z + 0x18), -20.f, 20.f);
+    //    ImGui::Checkbox("Draw Gun", (bool*)(*cg_drawGun + 0x18));
+    //    ImGui::SliderFloat("Gun X", (float*)(*cg_gun_x + 0x18), -20.f, 20.f);
+    //    ImGui::SliderFloat("Gun Y", (float*)(*cg_gun_y + 0x18), -20.f, 20.f);
+    //    ImGui::SliderFloat("Gun Z", (float*)(*cg_gun_z + 0x18), -20.f, 20.f);
 
-        ImGui::InputInt("Zombies Credits", (int*)zombiesCredits);
-        //ImGui::Checkbox("Infinite Ammo", bInfiniteAmmoCheck);
-        //ImGui::Checkbox("No Reload",  bNoReloadCheck);
+    //    ImGui::InputInt("Zombies Credits", (int*)zombiesCredits);
+    //    ImGui::Checkbox("Infinite Ammo", bInfiniteAmmoCheck);
+    //    ImGui::Checkbox("No Reload",  bNoReloadCheck);
 
-        ImGui::SliderFloat("Time Scale", (float*)(*timescale + 0x18), 0.f, 10.f);
-        ImGui::SliderInt("Speed", (int*)(*g_speed + 0x18), 0, 1000);
+    //    ImGui::SliderFloat("Time Scale", (float*)(*timescale + 0x18), 0.f, 10.f);
+    //    ImGui::SliderInt("Speed", (int*)(*g_speed + 0x18), 0, 1000);
 
-        ImGui::End();
+    //    ImGui::End();
 
-        ImGui::EndFrame();
-        ImGui::Render();
-        ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-    }
-    else
-    {
-        ImGui::GetIO().MouseDrawCursor = false;
-    }
+    //    ImGui::EndFrame();
+    //    ImGui::Render();
+    //    ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+    //}
+    //else
+    //{
+    //    ImGui::GetIO().MouseDrawCursor = false;
+    //}
 }
 
 LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
