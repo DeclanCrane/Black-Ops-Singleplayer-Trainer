@@ -1,6 +1,6 @@
 # Black Ops Singleplayer Trainer
 
-Simple trainer for Black Ops Singleplayer/Zombies on PC
+Feature-rich trainer for Black Ops Singleplayer/Zombies on PC
 
 ### How to Compile
 
