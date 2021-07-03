@@ -1,86 +1,82 @@
 #include "Aimbot.h"
 
-int GetTarget()
+int GetTarget(std::vector<entity_t*> &entityList)
 {
 	int bestTarget = -1;
-	float min = INT_MAX;
-	for (int i = 0; i < 5; i++)
+	float closestEntity = MAX_FLOAT;
+	int entityListSize = entityList.size();
+
+	for (int i = 0; i < entityListSize; i++)
 	{
-		DWORD enemyEntityList = 0x1BFBC84;
-
-		DWORD currentEnemy = *(DWORD*)(enemyEntityList + (0x8C * i));
-
-		// If enemy isn't alive or the pointer is null
-		int enemyAliveCheck = *(int*)(currentEnemy + 0x164);
-		if (enemyAliveCheck == 0 || currentEnemy == NULL)
+		if (entityList[i]->isAlive)
 		{
-			std::cout << "Failed at alive\n";
-			continue;
-		}
-		else
-		{
-			vec3_t enemyPosition = { 0.f };
-			enemyPosition[0] = *(float*)(currentEnemy + 0x18); // Set enemy position vector
-			enemyPosition[1] = *(float*)(currentEnemy + 0x1C);
-			enemyPosition[2] = *(float*)(currentEnemy + 0x20);
-			//enemyPosition[2] += 55.f;
-			if (enemyPosition[0] == 0.f && enemyPosition[1] == 0.f && enemyPosition[2] == 0.f) {
-				std::cout << "No position\n";
-				continue;
-			}
+			// Gets the distance from the enemy						// This needs to be cleaned up.
+			float distanceFromEnemy = sqrtf(localPlayer->WorldPos[0] - entityList[i]->WorldPos[0] * (localPlayer->WorldPos[0] - entityList[i]->WorldPos[0])
+										+ (localPlayer->WorldPos[1] - entityList[i]->WorldPos[1]) * (localPlayer->WorldPos[1] - entityList[i]->WorldPos[1])
+										+ (localPlayer->WorldPos[2] - entityList[i]->WorldPos[2]) * (localPlayer->WorldPos[2] - entityList[i]->WorldPos[2]));
 
-			float distanceFromEnemy = 0.f;
-			distanceFromEnemy = sqrtf((enemyPosition[0] - localPlayer->Origin[0]) * (enemyPosition[0] - localPlayer->Origin[0]) + (enemyPosition[1] - localPlayer->Origin[1]) * (enemyPosition[1] - localPlayer->Origin[1]) + (enemyPosition[2] - localPlayer->Origin[2]) * (enemyPosition[2] - localPlayer->Origin[2]));
-
-			if (distanceFromEnemy == 0.f) {
-				std::cout << "No distance\n";
-			}
-
-			if (distanceFromEnemy < min)
+			// Check if it is the cloest entity
+			if (distanceFromEnemy < closestEntity)
 			{
-				min = distanceFromEnemy;
+				closestEntity = distanceFromEnemy;
 				bestTarget = i;
 			}
 		}
 	}
-	return bestTarget;
+	// If there's no good target (They're all dead)
+	if (bestTarget == -1)
+		return -1;
+	else
+		return bestTarget; // Return best target
 }
 
-void Aimbot()
+void Aimbot(std::vector<entity_t*> &entityList)
 {
-	int target = GetTarget();
-	if (target == -1) {
-		std::cout << "NO TARGET\n";
-	}
+	// Get the aimbot target
+	int pTarget = GetTarget(entityList);
 
-	DWORD enemyEntityList = 0x1BFBC84;
-
-	DWORD currentEnemy = *(DWORD*)(enemyEntityList + (0x8C * target));
-	if (currentEnemy == NULL) {
+	// If there is no valid target
+	if (pTarget == -1)
 		return;
+
+	// Gets the distance from the enemy						// This needs to be cleaned up.
+	float distanceFromEnemy = sqrtf(localPlayer->WorldPos[0] - entityList[pTarget]->WorldPos[0] * (localPlayer->WorldPos[0] - entityList[pTarget]->WorldPos[0])
+								+ (localPlayer->WorldPos[1] - entityList[pTarget]->WorldPos[1]) * (localPlayer->WorldPos[1] - entityList[pTarget]->WorldPos[1])
+								+ (localPlayer->WorldPos[2] - entityList[pTarget]->WorldPos[2]) * (localPlayer->WorldPos[2] - entityList[pTarget]->WorldPos[2]));
+
+	//[REMOVED CRASHES THE GAME(W.I.P)]
+	// Get the bone to aim at			
+	//vec3_t bonePosition = { 0.f };
+	//Bones.GetEntityBones(entityList[pTarget], Bones.bones[j_helmet], bonePosition);
+
+	// Prevents laggy mouse movement and game crashing from large viewAngle floats
+	if (viewAngles->pitch > 9000.f || viewAngles->yaw > 9000.f) {
+		viewAngles->pitch = 0.f;
+		viewAngles->yaw = 0.f;
 	}
 
-	vec3_t enemyPosition = { 0.f };
-	enemyPosition[0] = *(float*)(currentEnemy + 0x18); // Set enemy position vector
-	enemyPosition[1] = *(float*)(currentEnemy + 0x1C);
-	enemyPosition[2] = *(float*)(currentEnemy + 0x20);
-	enemyPosition[2] += *(float*)(currentEnemy + 0x118);
-	std::cout << "enemyPosition X:" << enemyPosition[0] << "\nenemyPosition Y:" << enemyPosition[1] << "\nenemyPosition Z:" << enemyPosition[2] << std::endl;
+	// This is temporary, aims at upper-chest. Should be replaced with getting a bone position
+	vec3_t aimPosition = {entityList[pTarget]->WorldPos[0], entityList[pTarget]->WorldPos[1], entityList[pTarget]->WorldPos[2] + 55.f };
 
-	float distanceFromEnemy = 0.f;
-	distanceFromEnemy = sqrtf((enemyPosition[0] - localPlayer->Origin[0]) * (enemyPosition[0] - localPlayer->Origin[0]) + (enemyPosition[1] - localPlayer->Origin[1]) * (enemyPosition[1] - localPlayer->Origin[1]) + (enemyPosition[2] - localPlayer->Origin[2]) * (enemyPosition[2] - localPlayer->Origin[2]));
+	// Get angles to target
+	vec3_t aimbotAngles;
+	GetAngleToTarget(aimPosition, refdef->eyePosition, aimbotAngles);
 
-	vec3_t aimbotAngles = { 0.f };
-	GetAngleToTarget(enemyPosition, refdef->eyePosition, aimbotAngles);
+	// Get the delta
+	vec2_t delta;
+	delta[0] = aimbotAngles[0] - localPlayer->Yaw; // X
+	delta[1] = aimbotAngles[1] - localPlayer->Pitch; // Y
 
-	std::cout << "AimbotAngles X:" << aimbotAngles[0] << "\AimbotAngles Y:" << aimbotAngles[1] << std::endl;
+	// Add the delta to our player's view position
+	viewAngles->yaw += delta[0];
+	viewAngles->pitch += delta[1];
+}
 
-	vec2_t Delta = { 0.f };
-	Delta[0] = aimbotAngles[0] - localPlayer->Yaw; // X
-	Delta[1] = aimbotAngles[1] - localPlayer->Pitch; // Y
+bool IsVisible(vec3_t start, vec3_t end, int skipNumber)
+{
+	trace_t tr;
+	// OLD MASK 0x803003
+	CGTrace(&tr, start, end, skipNumber, 0x803003, 0, 0);
 
-	std::cout << "Delta X:" << Delta[0] << "\nDelta Y:" << Delta[1] << std::endl;
-
-	viewAngles->yaw		+= Delta[0];
-	viewAngles->pitch	+= Delta[1];
+	return (tr.fraction != 1.0f);
 }

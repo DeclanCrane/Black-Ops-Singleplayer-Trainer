@@ -33,6 +33,30 @@ typedef float vec3_t[3];
 #define AngleNormalize(a) (SHORT2ANGLE(ANGLE2SHORT((a))))
 
 #define ABS(x) ((x < 0) ? (-x) : (x))
+enum entityType_t
+{
+	ET_GENERAL,
+	ET_PLAYER,
+	ET_PLAYER_CORPSE,
+	ET_ITEM,
+	ET_MISSILE,
+	ET_INVISIBLE,
+	ET_SCRIPTMOVER,
+	ET_SOUND_BLEND,
+	ET_FX,
+	ET_LOOP_FX,
+	ET_PRIMARY_LIGHT,
+	ET_MG42,
+	ET_HELICOPTER,
+	ET_PLANE,
+	ET_VEHICLE,
+	ET_VEHICLE_COLLMAP,
+	ET_VEHICLE_CORPSE,
+	ET_ACTOR,
+	ET_ACTOR_SPAWNER,
+	ET_ACTOR_CORPSE,
+	ET_STREAMER_HINT
+};
 
 class refdef_t
 {
@@ -62,7 +86,7 @@ extern viewAngles_t* viewAngles;
 class entity_t
 {
 public:
-	int clientNum; //0x0000 // Has to be tested
+	int clientNum; //0x0000
 	char pad_0000[256]; //0x0004
 	vec3_t N000000F9; //0x0104
 	vec3_t HeadPos; //0x0110
@@ -88,7 +112,7 @@ public:
 	char pad_0011[3]; //0x0011
 	int bState; //0x0014  /* 4 Normal | 5 GodMode | 6 Spectator */
 	char pad_0018[12]; //0x0018
-	vec3_t Origin; //0x0024
+	vec3_t WorldPos; //0x0024
 	vec3_t Velocity; //0x0030
 	char pad_003C[88]; //0x003C
 	bool bOnGround; //0x0094
@@ -127,7 +151,7 @@ public:
 }; //Size: 0x00C0
 extern equipment_t* Equipment;
 
-class PlayerStats
+class playerstats_t
 {
 public:
 	char PlayerName[16]; //0x0000
@@ -137,6 +161,7 @@ public:
 	char pad_0058[28]; //0x0058
 	int Headshots; //0x0074
 }; //Size: 0x2A3C
+extern playerstats_t* PlayerStats;
 
 class dvar_t
 {
@@ -149,4 +174,69 @@ public:
 	char pad_001C[36]; //0x001C
 }; //Size: 0x0040
 extern dvar_t* cg_drawFPS;
+extern dvar_t* com_maxfps;
+extern dvar_t* cg_fov;
+extern dvar_t* cg_fovScale;
+extern dvar_t* g_timescale;
+extern dvar_t* g_speed;
+extern dvar_t* cg_drawCrosshair;
+extern dvar_t* cg_gun_x;
+extern dvar_t* cg_gun_y;
+extern dvar_t* cg_gun_z;
 
+enum TraceHitType
+{
+	TRACE_HITTYPE_NONE = 0,
+	TRACE_HITTYPE_ENTITY = 1,
+	TRACE_HITTYPE_DYNENT_MODEL = 2,
+	TRACE_HITTYPE_DYNENT_BRUSH = 3,
+	TRACE_HITTYPE_GLASS = 4,
+};
+
+struct trace_t
+{
+	/* 0x0000 */ vec3_t normal;
+	/* 0x000C */ char unk1[0x04];
+	/* 0x0010 */ float fraction;
+	/* 0x0014 */ int sflags;
+	/* 0x0018 */ int cflags;
+	/* 0x001c */ enum TraceHitType hitType;
+	/* 0x0020 */ unsigned short hitId;
+	/* 0x0022 */ unsigned short modelIndex;
+	/* 0x0024 */ unsigned short partName;
+	/* 0x0026 */ unsigned short boneIndex;
+	/* 0x0028 */ unsigned short partGroup;
+	/* 0x002a */ bool allsolid;
+	/* 0x002b */ bool startsolid;
+	/* 0x002c */ bool walkable;
+	/* 0x002d */ char Padding_455[3];
+	/* 0x0030 */ struct cStaticModel_s* staticModel;
+	/* 0x0034 */ int hitPartition;
+};
+
+static std::vector<std::string> itemNames = {
+	"m16_zm", "gl_m16_upgraded_zm", "m16_gl_upgraded_zm", "g11_lps_zm", "g11_lps_upgraded_zm", "famas_zm", "famas_upgraded_zm",
+	"ak74u_zm", "ak74u_upgraded_zm", "mp5k_zm", "mp5k_upgraded_zm", "mp40_zm", "mp40_upgraded_zm", "mpl_zm", "mpl_upgraded_zm",
+	"pm63_zm", "pm63_upgraded_zm", "pm63lh_upgraded_zm", "spectre_zm", "spectre_upgraded_zm", "cz75dw_zm", "cz75lh_zm",
+	"cz75dw_upgraded_zm", "cz75lh_upgraded_zm", "ithaca_zm", "ithaca_upgraded_zm", "rottweil72_zm", "rottweil72_upgraded_zm",
+	"spas_zm", "spas_upgraded_zm", "hs10_zm", "hs10_upgraded_zm", "hs10lh_upgraded_zm", "aug_acog_zm", "aug_acog_mk_upgraded_zm",
+	"mk_aug_upgraded_zm", "galil_zm", "galil_upgraded_zm", "commando_zm", "commando_upgraded_zm", "fnfal_zm", "fnfal_upgraded_zm",
+	"dragunov_zm", "dragunov_upgraded_zm", "l96a1_zm", "l96a1_upgraded_zm", "rpk_zm", "rpk_upgraded_zm", "hk21_zm", "hk21_upgraded_zm",
+	"m72_law_zm", "m72_law_upgraded_zm", "china_lake_zm", "china_lake_upgraded_zm", "zombie_cymbal_monkey", "freezegun_zm", "ray_gun_zm",
+	"crossbow_explosive_upgraded_zm", "bowie_knife_zm", "knife_ballistic_zm", "knife_ballistic_upgraded_zm", "knife_ballistic_bowie_zm",
+	"knife_ballistic_bowie_upgraded_zm", "explosive_bolt_zm", "explosive_bolt_upgraded_zm", "syrette_sp", "zombie_perk_bottle_doubletap",
+	"zombie_perk_bottle_jugg"
+};
+
+enum items {
+	M16, M16_GL, M16_GL_Upgraded, G11, G11_Upgraded, Famas, Famas_Upgraded,
+	AK74u, AK74u_Upgraded, MP5K, MP5K_Upgraded, MP40, MP40_Upgraded, MPL, MPL_Upgraded,
+	PM63, PM63_Upgraded, PM63_DualWield, Spectre, Spectre_Upgraded, CZ75_DualWield, CZ75_DualWield_OneHand,
+	CZ75_DualWield_Upgraded, CZ75_DualWield_OneHand_Upgraded, Stakeout, Stakeout_Upgraded, Olympia, Olympia_Upgraded,
+	Spas12, Spas12_Upgraded, HS10, HS10_Upgraded, HS10_OneHand_Upgraded, AUG, AUG_MK_Upgraded,
+	AUG_Upgraded, Galil, Galil_Upgraded, Commando, Commando_Upgraded, FNFAL, FNFAL_Upgraded,
+	Dragonov, Dragonov_Upgraded, L96A1, L96A1_Upgraded, RPK, RPK_Upgraded, HK21, HK21_Upgraded,
+	M72_LAW, M72_LAW_Upgraded, ChinaLake, ChinaLake_Upgraded, Zombie_Cymbal_Monkey, FreezeGun, RayGun,
+	Crossbow_Upgraded, BowieKnife, BallisticKnife, BallisticKnife_Upgraded, Ballistic_Bowie,
+	Ballistic_Bowie_Upgraded, Explosive_Bolt, Explosive_Bolt_Upgraded, Syrette, DoubleTap_Bottle, Juggernaut_Bottle
+};

@@ -7,15 +7,19 @@
 #include "Structs.h"
 #include "Offsets.h"
 
-#define MAX_ENTS 24 // I DON'T KNOW MAX ENTS, NEEDS TESTING
+#define MAX_ENTS 32 // I DON'T KNOW MAX ENTS, NEEDS TESTING
 
 
 
 class Entity_t {
 public:
+	// Stores all the entities
 	std::vector<entity_t*> cgEntities;
 
 public:
-	void GetEntities();
+	// Sorts entities and stores them
+	bool GetEntities();
+
+	void TeleportEntities();
 };
 extern Entity_t Entity;

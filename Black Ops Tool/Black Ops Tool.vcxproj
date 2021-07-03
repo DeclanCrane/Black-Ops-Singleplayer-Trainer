@@ -98,6 +98,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -122,6 +123,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -173,12 +175,11 @@
     <ClInclude Include="Drawing.h" />
     <ClInclude Include="EndScene.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="ImGuiMenuD3D9.h" />
+    <ClInclude Include="Hack.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Offsets.h" />
     <ClInclude Include="Structs.h" />
-    <ClInclude Include="Vector.h" />
-    <ClInclude Include="Viewmodel.h" />
     <ClInclude Include="Wall.h" />
     <ClInclude Include="WindowFinder.h" />
   </ItemGroup>
@@ -197,12 +198,11 @@
     <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="EndScene.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="ImGuiMenuD3D9.cpp" />
+    <ClCompile Include="Hack.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Offsets.cpp" />
     <ClCompile Include="Structs.cpp" />
-    <ClCompile Include="Vector.cpp" />
-    <ClCompile Include="Viewmodel.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="WindowFinder.cpp" />
   </ItemGroup>

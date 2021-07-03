@@ -11,6 +11,9 @@
 #include "../Include/ImGUI/imgui_impl_dx9.h"
 #include "../Include/ImGUI/imgui_impl_win32.h"
 
+#include "Hack.h"
+#include "Structs.h"
+#include "Wall.h"
 
 typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 
@@ -20,8 +23,6 @@ static WNDPROC oWndProc;
 
 // For Menu Input
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-
 
 class ImGuiMenu
 {
