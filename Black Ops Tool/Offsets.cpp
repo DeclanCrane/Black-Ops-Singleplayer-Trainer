@@ -25,3 +25,7 @@ GetTagPos_t GetTagPos = (GetTagPos_t)0x44A0A0;
 CG_Trace_t CGTrace = (CG_Trace_t)0x4CDF70;
 
 CG_ReturnTagPos_t CG_ReturnTagPos = (CG_ReturnTagPos_t)0x607FD0;
+
+Cmd_AddServerCommand_t Cmd_AddServerCommand = (Cmd_AddServerCommand_t)0x558290;
+
+Cmd_AddCommand_t Cmd_AddCommand = (Cmd_AddCommand_t)0x661400;

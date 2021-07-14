@@ -25,3 +25,9 @@ extern CG_Trace_t CGTrace;
 
 typedef int (__cdecl* CG_ReturnTagPos_t)(int entityAddress, void* Mesh, short wBone);
 extern CG_ReturnTagPos_t CG_ReturnTagPos;
+
+typedef void(__cdecl* Cmd_AddServerCommand_t)(const char * command, int a2, int a3);
+extern Cmd_AddServerCommand_t Cmd_AddServerCommand;
+
+typedef void(__cdecl* Cmd_AddCommand_t)(const char * command, int a2, int a3);
+extern Cmd_AddCommand_t Cmd_AddCommand;

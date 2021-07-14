@@ -12,6 +12,9 @@
 
 #include "Hack.h"
 
+#include "../Include/WindowFinder.h"
+#pragma comment(lib, "WindowFinder.lib")
+
 // Handle to the DLL
 static HMODULE DllHandle;
 
@@ -42,7 +45,7 @@ void myGameFunc()
 }
 
 // Get the desired window
-HWND hWindow = GetWindowByName("Call of Duty®: BlackOps");
+HWND hWindow = WindowFinder::GetWindowByProcessName(L"BlackOps.exe");
 
 // D3D9 EndScene Detour
 HRESULT __stdcall EndSceneDetour(IDirect3DDevice9* pDevice)
@@ -85,7 +88,7 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
     //--------------------//
     // D3D9 EndScene Hook //
     //--------------------//
-    BlackOpsHook.SetupD3D9Params(hWindow, CheckWindowMode(hWindow));
+    BlackOpsHook.SetupD3D9Params(hWindow, false);
     BlackOpsHook.CreateD3D9Device(hWindow);
     BlackOpsHook.Detour = EndSceneDetour;
     BlackOpsHook.HookEndScene();
@@ -134,6 +137,11 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
         // Gives item selected in hack menu
         if (GetAsyncKeyState(VK_F5) & 1) {
             Hack::GiveItem(Hack::selectedItem);
+        }
+
+        if (GetAsyncKeyState(VK_F7) & 1) {
+            BOOL bWindowed = WindowFinder::CheckWindowMode(hWindow);
+            std::cout << bWindowed << "\n";
         }
     }
 
