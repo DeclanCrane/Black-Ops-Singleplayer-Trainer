@@ -41,11 +41,8 @@ public:
     // Item Selected in Menu
     static int selectedItem;
 
-    // Used in RainbowESP
-    static int colorIndex;
-
-    //Constructor
-    Hack();
+    // Console Toggle
+    static bool bConsole;
 
     // Hack loop
     static void HackLoop();
@@ -56,22 +53,21 @@ public:
     // Toggles godmode
     static void God();
 
+    // Toggles in-game dev console
+    static void ToggleConsole();
+
     // Gives player item at index
     static void GiveItem(int itemIndex);
 
     // Warns player if an enemy is too close
     static void EnemyDistanceAlert(entity_t* pEnt);
 
-    // Rainbow ESP line and ESP box
-    static void RainbowESP();
-
+    // Draws Bone ESP
     static void DrawBoneESP(entity_t* pEnt);
 };
 
 /*
-
     Wrapper for ImGui menu to pass vectors
-
 */
 namespace ImGui
 {

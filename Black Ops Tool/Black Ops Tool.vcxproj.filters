@@ -54,9 +54,6 @@
     <ClInclude Include="Offsets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WindowFinder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Drawing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -114,9 +111,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Menu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowFinder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Drawing.cpp">

@@ -29,6 +29,8 @@ bool Hack::bDrawESPBones = false;
 
 int Hack::selectedItem = 0;
 
+bool Hack::bConsole = false;
+
 void Hack::HackLoop()
 {
 	Entity.GetEntities();
@@ -56,7 +58,8 @@ void Hack::HackLoop()
 			}
 		}
 	}
-	// Only draw crosshair when not aiming
+
+	// Custom Crosshair
 	if (bDrawCrosshair)
 	{
 		// Disable game crosshair
@@ -65,14 +68,15 @@ void Hack::HackLoop()
 			bCrosshairDisabled = true;
 		}
 
-		// If not aiming down sights
+		// Draw custom crosshair unless aiming down sights
 		if (localPlayer->ADS < 0.9)
 		{
 			Drawing.DrawCrosshair(crosshairGap, crosshairLength, crosshairThickness, 
 				D3DCOLOR_ARGB(255, (int)(crosshairColor[0]*255.f), (int)(crosshairColor[1]*255.f), (int)(crosshairColor[2]*255.f)));
 		}
 	}
-	// If custom crosshair is off, but crosshair is still disabled
+
+	// If custom crosshair is off, enable game crosshair
 	if (!bDrawCrosshair && bCrosshairDisabled)
 	{
 		cg_drawCrosshair->Value = 1;
@@ -88,6 +92,16 @@ void Hack::NoClip()
 void Hack::God()
 {
 	CBuf_AddText(0, "god");
+}
+
+void Hack::ToggleConsole()
+{
+	if (bConsole)
+		*(int*)dwConsole = 16;
+	if (!bConsole)
+		*(int*)dwConsole = 17;
+
+	bConsole = !bConsole;
 }
 
 void Hack::GiveItem(int itemIndex)
@@ -109,28 +123,6 @@ void Hack::EnemyDistanceAlert(entity_t* pEnt)
 			D3DCOLOR_ARGB(255, int(distanceAlertColor[0] * 255), int(distanceAlertColor[1] * 255), int(distanceAlertColor[2] * 255)));
 	}
 }
-
-// Rainbow ESP
-/* // W.I.P
-void Hack::RainbowESP()
-{
-	// Index Reset
-	if (colorIndex == 3)
-		colorIndex = 0;
-
-	// Update Color
-	ESPBoxColor[colorIndex] += 0.01;
-
-	// Swap Color
-	if (ESPBoxColor[colorIndex] >= 1.f)
-	{
-		// Reset Color
-		ESPBoxColor[colorIndex] == 0.f;
-
-		colorIndex += 1;
-	}
-}
-*/
 
 void Hack::DrawBoneESP(entity_t* pEnt)
 {

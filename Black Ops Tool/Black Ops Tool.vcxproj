@@ -183,7 +183,6 @@
     <ClInclude Include="Offsets.h" />
     <ClInclude Include="Structs.h" />
     <ClInclude Include="Wall.h" />
-    <ClInclude Include="WindowFinder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Include\ImGui\imgui.cpp" />
@@ -206,7 +205,6 @@
     <ClCompile Include="Offsets.cpp" />
     <ClCompile Include="Structs.cpp" />
     <ClCompile Include="Wall.cpp" />
-    <ClCompile Include="WindowFinder.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

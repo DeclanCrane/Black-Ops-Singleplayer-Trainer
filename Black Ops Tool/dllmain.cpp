@@ -2,47 +2,25 @@
 #include <Windows.h>
 
 #include "Console.h"
-#include "WindowFinder.h"
 #include "EndScene.h"
 #include "Menu.h"
-
-// Drawing
-#include "Drawing.h"
-#include "Entity.h"
-
-#include "Hack.h"
 
 #include "../Include/WindowFinder.h"
 #pragma comment(lib, "WindowFinder.lib")
 
+#include "Drawing.h"
+#include "Entity.h"
+#include "Hack.h"
+
 // Handle to the DLL
 static HMODULE DllHandle;
 
-D3D9Hook BlackOpsHook;
-ImGuiMenu BlackOpsMenu;
+// Hook & Menu
+D3D9Hook Hook;
+ImGuiMenu Menu;
 
-bool bConsole = false;
-
-typedef void(__cdecl* RenderScene_t)(int a1, int a2);
-RenderScene_t RenderScene;
-
-typedef void(__cdecl* GameFunc_t)();
-GameFunc_t GameFunc;
-
+// Make sure D3D9 device is only passed once
 static bool bGotDraw = false;
-
-void myRenderScene(int a1, int a2)
-{
-    // DO STUFF
-
-    RenderScene(a1, a2);
-}
-
-void myGameFunc()
-{
-    std::cout << "Hooked\n";
-    GameFunc();
-}
 
 // Get the desired window
 HWND hWindow = WindowFinder::GetWindowByProcessName(L"BlackOps.exe");
@@ -51,21 +29,24 @@ HWND hWindow = WindowFinder::GetWindowByProcessName(L"BlackOps.exe");
 HRESULT __stdcall EndSceneDetour(IDirect3DDevice9* pDevice)
 {
     // Pass the pDevice pointer to Drawing for drawing on screen
-    if (!bGotDraw)
-    {
+    if (!bGotDraw) {
         Drawing.pDevice = pDevice;
         bGotDraw = true;
     }
 
-    
-    // Menu Setup
-    BlackOpsMenu.SetupImGui(hWindow, pDevice);
-    BlackOpsMenu.Menu();
+    // Menu
+    Menu.SetupImGui(hWindow, pDevice);
+    Menu.Menu();
 
     // Call Hack
     Hack::HackLoop();
 
-    return BlackOpsHook.pEndScene(pDevice);
+    return Hook.pEndScene(pDevice);
+}
+
+HRESULT __stdcall ResetDetour(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
+{
+    return Hook.ResetDetour(pDevice, pPresentationParameters);
 }
 
 DWORD __stdcall EjectThread(LPVOID lpParameter)
@@ -77,7 +58,6 @@ DWORD __stdcall EjectThread(LPVOID lpParameter)
 
 DWORD WINAPI MainThread(HINSTANCE hModule)
 {
-
     // Create a console for printing
     Console console;
     console.PrintCustom("=====================================", ConsoleTextColor::darkBlue);
@@ -88,15 +68,7 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
     //--------------------//
     // D3D9 EndScene Hook //
     //--------------------//
-    BlackOpsHook.SetupD3D9Params(hWindow, false);
-    BlackOpsHook.CreateD3D9Device(hWindow);
-    BlackOpsHook.Detour = EndSceneDetour;
-    BlackOpsHook.HookEndScene();
-
-    Bones.RegisterBones();
-
-    //RenderScene = (RenderScene_t)DetourFunction((PBYTE)0x6C8CD0, (PBYTE)myRenderScene);
-    //GameFunc = (GameFunc_t)DetourFunction((PBYTE)0x78F560, (PBYTE)myGameFunc);
+    Hook.HookEndScene(hWindow, EndSceneDetour, ResetDetour);
 
     // Main loop
     while (true)
@@ -107,20 +79,16 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
             break;
         }
 
-        // Show Menu
+        // Toggle Menu
         if (GetAsyncKeyState(VK_INSERT) & 1)
         {
-            BlackOpsMenu.bShowMenu = !BlackOpsMenu.bShowMenu;
+            Menu.bShowMenu = !Menu.bShowMenu;
         }
 
-        // Toggle Console
+        // Toggle Developer Console
         if (GetAsyncKeyState(VK_DOWN) & 1)
         {
-            bConsole = !bConsole;
-            if(bConsole)
-                *(int*)dwConsole = 16;
-            if(!bConsole)
-                *(int*)dwConsole = 17;
+            Hack::ToggleConsole();
         } 
 
         // Teleport Zombies/Bots to Player
@@ -137,11 +105,6 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
         // Gives item selected in hack menu
         if (GetAsyncKeyState(VK_F5) & 1) {
             Hack::GiveItem(Hack::selectedItem);
-        }
-
-        if (GetAsyncKeyState(VK_F7) & 1) {
-            BOOL bWindowed = WindowFinder::CheckWindowMode(hWindow);
-            std::cout << bWindowed << "\n";
         }
     }
 
