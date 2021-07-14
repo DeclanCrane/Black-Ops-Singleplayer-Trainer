@@ -1,15 +1,11 @@
 # Black Ops Singleplayer Trainer
 
-Simple trainer for Black Ops Singleplayer/Zombies on PC
+Feature-rich trainer for Black Ops Singleplayer/Zombies on PC
 
----
-
-# How to Compile
+### How to Compile
 
 Make sure to build in x86, x64 not supported
 
----
-
-# Contributors
+### Contributors
 
 Declan Crane
