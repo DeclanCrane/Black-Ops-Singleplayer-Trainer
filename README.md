@@ -25,6 +25,7 @@
 ## How to Use
 1. Download the [latest release](https://github.com/DeclanCrane/Black-Ops-Singleplayer-Trainer/tags)
 2. Inject the .dll with your favourite DLL injector. ([Process Hacker](https://processhacker.sourceforge.io/) is a great option)
+3. Hit 'Insert' to show the menu
 
 ## How to Compile
 1. Download and install [Microsoft DirectX9 SDK](https://www.microsoft.com/en-ca/download/details.aspx?id=6812)
