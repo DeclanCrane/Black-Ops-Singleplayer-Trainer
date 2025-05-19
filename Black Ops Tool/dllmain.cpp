@@ -17,7 +17,6 @@
 static HMODULE DllHandle;
 
 // Hook & Menu
-//D3D9Hook Hook;
 ImGuiMenu Menu;
 
 // Make sure D3D9 device is only passed once
@@ -26,7 +25,6 @@ static bool bMenuSetup = false;
 
 // Get the desired window
 HWND hWindow = WindowFinder::GetWindowByProcessName(L"BlackOps.exe");
-
 
 HRESULT WINAPI EndSceneCallback(LPDIRECT3DDEVICE9 d3dDevice) {
 
@@ -81,8 +79,6 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
     //--------------------//
     // D3D9 EndScene Hook //
     //--------------------//
-    //    [OLD]      Hook.HookEndScene(hWindow, EndSceneDetour, ResetDetour);
-
     D3D9Hook D3D9(EndSceneCallback, ResetCallback, GetCurrentProcessWindow());
     if (!D3D9.Install())
         std::cout << "Failure to capture D3D9\n";
