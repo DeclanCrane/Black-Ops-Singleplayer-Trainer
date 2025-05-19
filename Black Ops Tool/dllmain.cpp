@@ -2,12 +2,8 @@
 #include <Windows.h>
 
 #include "Console.h"
-//#include "EndScene.h" // To be removed
 #include "../Include/D3D9Hook.h"
 #include "Menu.h"
-
-#include "../Include/WindowFinder.h"
-#pragma comment(lib, "WindowFinder.lib")
 
 #include "Drawing.h"
 #include "Entity.h"
@@ -22,9 +18,6 @@ ImGuiMenu Menu;
 // Make sure D3D9 device is only passed once
 static bool bGotDraw = false;
 static bool bMenuSetup = false;
-
-// Get the desired window
-HWND hWindow = WindowFinder::GetWindowByProcessName(L"BlackOps.exe");
 
 HRESULT WINAPI EndSceneCallback(LPDIRECT3DDEVICE9 d3dDevice) {
 
