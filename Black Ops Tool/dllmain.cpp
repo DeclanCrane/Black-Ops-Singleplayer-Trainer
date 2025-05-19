@@ -2,7 +2,8 @@
 #include <Windows.h>
 
 #include "Console.h"
-#include "EndScene.h"
+//#include "EndScene.h" // To be removed
+#include "../Include/D3D9Hook.h"
 #include "Menu.h"
 
 #include "../Include/WindowFinder.h"
@@ -16,38 +17,50 @@
 static HMODULE DllHandle;
 
 // Hook & Menu
-D3D9Hook Hook;
+//D3D9Hook Hook;
 ImGuiMenu Menu;
 
 // Make sure D3D9 device is only passed once
 static bool bGotDraw = false;
+static bool bMenuSetup = false;
 
 // Get the desired window
 HWND hWindow = WindowFinder::GetWindowByProcessName(L"BlackOps.exe");
 
-// D3D9 EndScene Detour
-HRESULT __stdcall EndSceneDetour(IDirect3DDevice9* pDevice)
-{
-    // Pass the pDevice pointer to Drawing for drawing on screen
+
+HRESULT WINAPI EndSceneCallback(LPDIRECT3DDEVICE9 d3dDevice) {
+
+    // Drawing Setup
     if (!bGotDraw) {
-        Drawing.pDevice = pDevice;
+        Drawing.pDevice = d3dDevice;
         bGotDraw = true;
     }
 
-    // Menu
-    Menu.SetupImGui(hWindow, pDevice);
-    Menu.Menu();
+    // Menu Setup
+    if (Menu.bSetup) {
+        Menu.Menu();
+    }
 
     // Call Hack
     Hack::HackLoop();
 
-    return Hook.pEndScene(pDevice);
+    return 0;
 }
 
-HRESULT __stdcall ResetDetour(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters)
-{
-    return Hook.ResetDetour(pDevice, pPresentationParameters);
+HRESULT WINAPI ResetCallback(LPDIRECT3DDEVICE9 d3dDevice, D3DPRESENT_PARAMETERS* d3dpp) {
+    std::cout << "Reset!\n";
+
+    // Reset drawing device
+    bGotDraw = false;
+
+    // Reset ImGui
+    Menu.CleanUp();
+    bMenuSetup = false;
+
+    return 0;
 }
+
+
 
 DWORD __stdcall EjectThread(LPVOID lpParameter)
 {
@@ -68,7 +81,13 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
     //--------------------//
     // D3D9 EndScene Hook //
     //--------------------//
-    Hook.HookEndScene(hWindow, EndSceneDetour, ResetDetour);
+    //    [OLD]      Hook.HookEndScene(hWindow, EndSceneDetour, ResetDetour);
+
+    D3D9Hook D3D9(EndSceneCallback, ResetCallback, GetCurrentProcessWindow());
+    if (!D3D9.Install())
+        std::cout << "Failure to capture D3D9\n";
+
+    Menu.SetupImGui(GetCurrentProcParentWindow(), D3D9.GetDevice());
 
     // Main loop
     while (true)
@@ -89,7 +108,7 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
         if (GetAsyncKeyState(VK_DOWN) & 1)
         {
             Hack::ToggleConsole();
-        } 
+        }
 
         // Teleport Zombies/Bots to Player
         if (GetAsyncKeyState(VK_F4) & 1) {
@@ -106,7 +125,23 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
         if (GetAsyncKeyState(VK_F5) & 1) {
             Hack::GiveItem(Hack::selectedItem);
         }
+
+        // If application window is lost or reset
+        if (D3D9.HasWindowBeenLost()) {
+            Menu.CleanUp();
+            D3D9.Restore();
+            Menu.SetupImGui(D3D9.GetWindow(), D3D9.GetDevice());
+        }
+
+        if (GetAsyncKeyState(VK_F7) & 1) {
+            std::string command = "give shrink_ray_zm";
+            CBuf_AddText(0, command.c_str());
+        }
     }
+
+    Menu.CleanUp();
+    D3D9.Uninstall();
+    console.CloseConsole();
 
     // Creates ejection thread
     CreateThread(NULL, 0, EjectThread, NULL, 0, NULL);
@@ -114,10 +149,10 @@ DWORD WINAPI MainThread(HINSTANCE hModule)
     return 0;
 }
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-                     )
+BOOL APIENTRY DllMain(HMODULE hModule,
+    DWORD  ul_reason_for_call,
+    LPVOID lpReserved
+)
 {
     switch (ul_reason_for_call)
     {

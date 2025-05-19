@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Include\D3D9Hook.h" />
     <ClInclude Include="..\Include\ImGui\imconfig.h" />
     <ClInclude Include="..\Include\ImGui\imgui.h" />
     <ClInclude Include="..\Include\ImGui\imgui_impl_dx9.h" />
@@ -171,11 +172,11 @@
     <ClInclude Include="..\Include\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Include\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Include\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\Include\NullSystem.h" />
     <ClInclude Include="Aimbot.h" />
     <ClInclude Include="Bones.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Drawing.h" />
-    <ClInclude Include="EndScene.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Hack.h" />
     <ClInclude Include="Menu.h" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Include\D3D9Hook.cpp" />
     <ClCompile Include="..\Include\ImGui\imgui.cpp" />
     <ClCompile Include="..\Include\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\Include\ImGui\imgui_draw.cpp" />
@@ -192,12 +194,12 @@
     <ClCompile Include="..\Include\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="..\Include\ImGui\imgui_tables.cpp" />
     <ClCompile Include="..\Include\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="..\Include\NullSystem.cpp" />
     <ClCompile Include="Aimbot.cpp" />
     <ClCompile Include="Bones.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Drawing.cpp" />
-    <ClCompile Include="EndScene.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Hack.cpp" />
     <ClCompile Include="Menu.cpp" />

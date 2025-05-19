@@ -3,7 +3,6 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 
-#include "EndScene.h"
 #include "Structs.h"
 
 class Drawing_t {
